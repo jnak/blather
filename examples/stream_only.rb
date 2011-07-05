@@ -5,7 +5,7 @@ require 'blather'
 
 trap(:INT) { EM.stop }
 trap(:TERM) { EM.stop }
-EM.run do
+EM.synchrony do
   Blather::Stream::Client.start(Class.new {
     attr_accessor :jid
 

@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email       = %q{sprsquish@gmail.com}
   s.homepage    = "http://github.com/sprsquish/blather"
   s.summary     = %q{Simpler XMPP built for speed}
-  s.description = %q{An XMPP DSL for Ruby written on top of EventMachine and Nokogiri}
+  s.description = %q{An XMPP DSL for Ruby written on top of EM-Synchrony and Nokogiri}
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
@@ -19,13 +19,13 @@ Gem::Specification.new do |s|
 
   s.rdoc_options = %w{--charset=UTF-8}
   s.extra_rdoc_files = %w{LICENSE README.md}
-
-  s.add_dependency("eventmachine", ["~> 0.12.6"])
+  
   s.add_dependency("nokogiri", [">= 1.4.0"])
   s.add_dependency("niceogiri", [">= 0.0.4"])
   s.add_dependency("minitest", [">= 1.7.1"])
   s.add_dependency("activesupport", [">= 3.0.7"])
-
+  s.add_dependency("eventmachine", [">= 1.0.0.beta.1"])
+  s.add_dependency("em-synchrony", [">= 0.3"])
   s.add_development_dependency("minitest", ["~> 1.7.1"])
   s.add_development_dependency("mocha", ["~> 0.9.12"])
   s.add_development_dependency("bundler", ["~> 1.0.0"])
@@ -34,3 +34,4 @@ Gem::Specification.new do |s|
   s.add_development_dependency("bluecloth", ["~> 2.1.0"])
   s.add_development_dependency("rake")
 end
+

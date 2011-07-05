@@ -32,7 +32,7 @@ end
 
 trap(:INT) { EM.stop }
 trap(:TERM) { EM.stop }
-EM.run do
+EM.synchrony do
   Ping.run
   Pong.run
 end

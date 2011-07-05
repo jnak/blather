@@ -1,16 +1,20 @@
 # Require the necessary files
+
 %w[
   rubygems
-  eventmachine
   niceogiri
+  em-synchrony
   ipaddr
   digest/md5
   digest/sha1
   logger
-
+  
   active_support/core_ext/class/inheritable_attributes
   active_support/core_ext/object/blank
+  ].each { |r| require r }
 
+%w[
+  blather/core_ext/em-synchrony
   blather/core_ext/eventmachine
   blather/core_ext/ipaddr
 
@@ -28,6 +32,7 @@
 
   blather/stanza
   blather/stanza/iq
+
   blather/stanza/iq/command
   blather/stanza/iq/ibb
   blather/stanza/iq/ping
@@ -45,7 +50,7 @@
   blather/stanza/presence/c
   blather/stanza/presence/status
   blather/stanza/presence/subscription
-
+  
   blather/stanza/pubsub
   blather/stanza/pubsub/affiliations
   blather/stanza/pubsub/create
@@ -73,7 +78,8 @@
   blather/stream/features/sasl
   blather/stream/features/session
   blather/stream/features/tls
-].each { |r| require r }
+  ].each {|f| require File.join(File.dirname(__FILE__), f)}
+
 
 # The core Blather namespace
 module Blather

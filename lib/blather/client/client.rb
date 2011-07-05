@@ -58,6 +58,7 @@ module Blather
       @filters = {:before => [], :after => []}
       @roster = Roster.new self
       @caps = Stanza::Capabilities.new
+      @magic = 5
 
       setup_initial_handlers
     end
@@ -201,7 +202,7 @@ module Blather
       @setup << port if port
       self
     end
-
+    
     protected
 
     def stream
@@ -276,14 +277,19 @@ module Blather
         catch(:pass) { call_handler handler, guards, stanza }
       end
     end
-
+    
+    # Pathed to work with EM Synchrony
+    # Just a typical EM-S pattern with fiber wrapping calls
+    
     def call_handler(handler, guards, stanza)
-      if guards.first.respond_to?(:to_str)
-        result = stanza.find(*guards)
-        handler.call(stanza, result) unless result.empty?
-      else
-        handler.call(stanza) unless guarded?(guards, stanza)
-      end
+      Fiber.new do
+        if guards.first.respond_to?(:to_str)
+          result = stanza.find(*guards)
+          handler.call(stanza, result) unless result.empty?
+        else
+          handler.call(stanza) unless guarded?(guards, stanza)
+        end
+      end.resume
     end
 
     # If any of the guards returns FALSE this returns true

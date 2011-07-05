@@ -68,7 +68,7 @@ at_exit do
 
     trap(:INT) { EM.stop }
     trap(:TERM) { EM.stop }
-    EM.run { client.run }
+    EM.synchrony { client.run }
   end
 
   if options[:daemonize]
