@@ -24,8 +24,9 @@ Gem::Specification.new do |s|
   s.add_dependency("niceogiri", [">= 0.0.4"])
   s.add_dependency("minitest", [">= 1.7.1"])
   s.add_dependency("activesupport", [">= 3.0.7"])
-  s.add_dependency("eventmachine", [">= 1.0.0.beta.1"])
-  s.add_dependency("em-synchrony", [">= 0.3"])
+  #s.add_dependency("eventmachine", [">= 1.0.0.beta.1"])
+  #s.add_dependency("em-synchrony", [">= 0.3"])
+  s.add_dependency 'em-synchrony', '>= 0.3.0.beta.1'
   s.add_development_dependency("minitest", ["~> 1.7.1"])
   s.add_development_dependency("mocha", ["~> 0.9.12"])
   s.add_development_dependency("bundler", ["~> 1.0.0"])
