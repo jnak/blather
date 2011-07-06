@@ -130,7 +130,7 @@ module Blather
     def type=(type)
       write_attr :type, type
     end
-
+    
     # Create an error stanza from the current stanza
     #
     # @param [String] name the error name

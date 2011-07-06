@@ -14,6 +14,13 @@ module EventMachine
         end
       end
       
+      def query_id(*args, &blk)
+        execute(false) do |conn|
+          conn.send(:query, *args, &blk)
+          conn.send(:query, 'SELECT LAST_INSERT_ID() AS last_id;')
+        end
+      end
+      
     end
   end
 end
