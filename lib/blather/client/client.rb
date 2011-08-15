@@ -33,8 +33,12 @@ module Blather
   #
   class Client
     attr_reader :jid,
-                :roster,
+                #:roster,
                 :caps
+    
+    attr_accessor :state,
+                  :stanzas_count
+                
 
     # Create a new client and set it up
     #
@@ -227,18 +231,18 @@ module Blather
       #   write StanzaError.new(iq, 'service-unavailable', :cancel).to_node
       # end
 
-      register_handler :ping, :type => :get do |ping|
-        write ping.reply
-      end
+      # register_handler :ping, :type => :get do |ping|
+      #         write ping.reply
+      #       end
 
-      register_handler :status do |status|
-        roster[status.from].status = status if roster[status.from]
-        nil
-      end
+      # register_handler :status do |status|
+      #         roster[status.from].status = status if roster[status.from]
+      #         nil
+      #       end
 
-      register_handler :roster do |node|
-        roster.process node
-      end
+      # register_handler :roster do |node|
+      #         roster.process node
+      #       end
     end
 
     def ready!
@@ -278,18 +282,28 @@ module Blather
       end
     end
     
-    # Pathed to work with EM Synchrony
+    # Patched to work with EM Synchrony
     # Just a typical EM-S pattern with fiber wrapping calls
     
     def call_handler(handler, guards, stanza)
-      Fiber.new do
-        if guards.first.respond_to?(:to_str)
-          result = stanza.find(*guards)
-          handler.call(stanza, result) unless result.empty?
-        else
-          handler.call(stanza) unless guarded?(guards, stanza)
+      if guards.first.respond_to?(:to_str)
+        result = stanza.find(*guards)
+        unless result.empty?
+          Fiber.new do 
+            $critical += 1
+            handler.call(stanza, result) 
+            $critical -= 1
+          end.resume
+        end 
+      else
+        unless guarded?(guards, stanza)
+          Fiber.new do 
+            $critical += 1
+            handler.call(stanza) 
+            $critical -= 1
+          end.resume
         end
-      end.resume
+      end
     end
 
     # If any of the guards returns FALSE this returns true
