@@ -164,6 +164,10 @@ module Blather
     def when_ready(&block)
       handle :ready, &block
     end
+    
+    def when_shutting_down(&block)
+      handle :sutting_down, &block
+    end
 
     # Wrapper for "handle :disconnected"
     #

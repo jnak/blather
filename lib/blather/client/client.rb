@@ -169,7 +169,13 @@ module Blather
 
     # Close the connection
     def close
-      self.stream.close_connection_after_writing
+      @state = :shutting_down
+      EM::Synchrony.add_periodic_timer(0.1) do
+        if client.stanzas_count == 0
+          self.stream.close_connection_after_writing
+          EM.stop
+        end
+      end
     end
 
     # @private
@@ -207,19 +213,25 @@ module Blather
       self
     end
     
+    # Converts a string into a stanza and process it as a normal stanza
+    
+    def process_string(string)
+      stream.receive_data(string)
+    end
+    
     protected
 
     def stream
       @stream || raise('Stream not ready!')
     end
-
+    
     def check_handler(type, guards)
       Blather.logger.warn "Handler for type \"#{type}\" will never be called as it's not a registered type" unless current_handlers.include?(type)
       check_guards guards
     end
 
     def current_handlers
-      [:ready, :disconnected] + Stanza.handler_list + BlatherError.handler_list
+      [:ready, :disconnected, :shutting_down] + Stanza.handler_list + BlatherError.handler_list
     end
 
     def setup_initial_handlers
@@ -266,7 +278,9 @@ module Blather
     end
 
     def handle_stanza(stanza)
-      if handler = @tmp_handlers.delete(stanza.id)
+      if @state == :shutting_down
+         call_handler_for(:shutting_down, stanza)
+      elsif handler = @tmp_handlers.delete(stanza.id)
         handler.call stanza
       else
         stanza.handler_hierarchy.each do |type|

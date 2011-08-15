@@ -65,16 +65,9 @@ at_exit do
     end
 
     Blather.logger.level = Logger::DEBUG if options[:debug]
-    
-    def shutdown
-      client.state = :shutting_down
-      EM.add_periodic_timer(0.1) do
-         EM.stop if client.stanzas_count == 0
-       end
-    end
-     
-    trap(:INT)    { shutdown }
-    trap(:TERM)   { shutdown }
+         
+    trap(:INT)    { client.close }
+    trap(:TERM)   { client.close }
     
     EM.synchrony  { client.run }
   end
