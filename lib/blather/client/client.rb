@@ -290,17 +290,17 @@ module Blather
         result = stanza.find(*guards)
         unless result.empty?
           Fiber.new do 
-            $critical += 1
+            client.stanzas_count += 1
             handler.call(stanza, result) 
-            $critical -= 1
+            client.stanzas_count -= 1
           end.resume
         end 
       else
         unless guarded?(guards, stanza)
           Fiber.new do 
-            $critical += 1
+            client.stanzas_count += 1
             handler.call(stanza) 
-            $critical -= 1
+            client.stanzas_count -= 1
           end.resume
         end
       end
