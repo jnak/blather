@@ -55,7 +55,7 @@ module Blather
 
     def initialize  # @private
       @state = :initializing
-
+      @stanzas_count = 0
       @status = Stanza::Presence::Status.new
       @handlers = {}
       @tmp_handlers = {}
